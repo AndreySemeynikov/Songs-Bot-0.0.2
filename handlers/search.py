@@ -22,14 +22,12 @@ async def search_message_handler(message: Message):
         await message.answer("Please provide a non-empty query.")
         return
 
-    # Retrieve the document store from the dispatcher
     doc_store = dp["doc_store"]
     matching_docs = doc_store.search_by_content(query)
     if not matching_docs:
         await message.answer("No matching files found.")
         return
 
-    # Create inline buttons for each document; use document id for callback data
     buttons = [
         InlineKeyboardButton(text=doc.filename, callback_data=f"file_{doc.id}")
         for doc in matching_docs
@@ -53,26 +51,23 @@ async def file_callback_handler(callback_query: CallbackQuery):
     Retrieves the document by its short id from the DocumentStore
     and sends its content.
     """
-    # Extract the document id from the callback data ("file_<doc_id>")
+
     doc_id = callback_query.data.split("_")[1]
 
-    # Retrieve the DocumentStore from the dispatcher
     doc_store = dp.get("doc_store")
     if doc_store is None:
         await callback_query.answer("Document store not found.", show_alert=True)
         return
 
-    # Retrieve the document by its id
     document = doc_store.get_by_id(doc_id)
     if document is None:
         await callback_query.answer("Document not found.", show_alert=True)
         return
 
-    # Send the document content as a message
     await callback_query.message.answer(
         f"Content of {document.filename}:\n\n{document.content}"
     )
-    #await callback_query.answer()
+
     message_id = callback_query.message.message_id
     chat_id = callback_query.message.chat.id
 
