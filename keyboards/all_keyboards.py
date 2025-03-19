@@ -1,5 +1,7 @@
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, KeyboardButton, ReplyKeyboardMarkup
 from aiogram_widgets.pagination import KeyboardPaginator
+
+from create_bot import admins
 
 
 # todo move to inline keyboards
@@ -37,3 +39,25 @@ def create_file_keyboard_paginator(matching_files: list, current_page: int, quer
     paginator.current_page = current_page
 
     return paginator.as_markup()
+
+
+def main_kb(user_telegram_id: int):
+    kb_list = [[KeyboardButton(text="👤 Мой профиль")]]
+    if user_telegram_id in admins:
+        kb_list.append([KeyboardButton(text="⚙️ Админ панель")])
+    return ReplyKeyboardMarkup(
+        keyboard=kb_list,
+        resize_keyboard=True,
+        one_time_keyboard=True
+    )
+
+
+def home_page_kb(user_telegram_id: int):
+    kb_list = [[KeyboardButton(text="🔙 Назад")]]
+    if user_telegram_id in admins:
+        kb_list.append([KeyboardButton(text="⚙️ Админ панель")])
+    return ReplyKeyboardMarkup(
+        keyboard=kb_list,
+        resize_keyboard=True,
+        one_time_keyboard=True
+    )
